@@ -1,0 +1,5 @@
+/build
+google-services.json
+
+# Signing files
+.signing/
