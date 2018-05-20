@@ -5,12 +5,15 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -54,7 +57,10 @@ public class SignUpActivity extends AppCompatActivity {
                     mFirebaseAuth.createUserWithEmailAndPassword(email, password)
                             .addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
                                 @Override
+
                                 public void onComplete(@NonNull Task<AuthResult> task) {
+                                    Log.d("FirebaseAuth", "onComplete" + task.getException().getMessage());
+
                                     if (task.isSuccessful()) {
                                         Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -68,6 +74,12 @@ public class SignUpActivity extends AppCompatActivity {
                                         AlertDialog dialog = builder.create();
                                         dialog.show();
                                     }
+                                }
+                            })
+                            .addOnFailureListener(SignUpActivity.this, new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.e("exception",e.getMessage());
                                 }
                             });
                 }
