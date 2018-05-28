@@ -54,12 +54,7 @@ public class LogInActivity extends AppCompatActivity {
                 password = password.trim();
 
                 if (email.isEmpty() || password.isEmpty()) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(LogInActivity.this);
-                    builder.setMessage(R.string.login_error_message)
-                            .setTitle(R.string.login_error_title)
-                            .setPositiveButton(android.R.string.ok, null);
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
+                    ShowAlertMessage(getResources().getString(R.string.login_error_message), getResources().getString(R.string.login_error_title));
                 } else {
                     mFirebaseAuth.signInWithEmailAndPassword(email, password)
                             .addOnCompleteListener(LogInActivity.this, new OnCompleteListener<AuthResult>() {
@@ -71,17 +66,21 @@ public class LogInActivity extends AppCompatActivity {
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         startActivity(intent);
                                     } else {
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(LogInActivity.this);
-                                        builder.setMessage(task.getException().getMessage())
-                                                .setTitle(R.string.login_error_title)
-                                                .setPositiveButton(android.R.string.ok, null);
-                                        AlertDialog dialog = builder.create();
-                                        dialog.show();
+                                        ShowAlertMessage(task.getException().getMessage(), getResources().getString(R.string.login_error_title));
                                     }
                                 }
                             });
                 }
             }
         });
+    }
+
+    private void ShowAlertMessage(String message, String title){
+        AlertDialog.Builder builder = new AlertDialog.Builder(LogInActivity.this);
+        builder.setMessage(message)
+                .setTitle(title)
+                .setPositiveButton(android.R.string.ok, null);
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

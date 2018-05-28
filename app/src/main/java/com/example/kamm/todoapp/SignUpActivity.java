@@ -47,19 +47,18 @@ public class SignUpActivity extends AppCompatActivity {
                 email = email.trim();
 
                 if (password.isEmpty() || email.isEmpty()) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(SignUpActivity.this);
-                    builder.setMessage(R.string.signup_error_message)
-                            .setTitle(R.string.signup_error_title)
-                            .setPositiveButton(android.R.string.ok, null);
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
-                } else {
+                    ShowAlertMessage(getResources().getString(R.string.signup_error_message), getResources().getString(R.string.signup_error_title));
+                }
+                else if (password.length() < 6) {
+                    ShowAlertMessage(getResources().getString(R.string.password_weak_message), getResources().getString(R.string.signup_error_title));
+                }
+                else
+                 {
                     mFirebaseAuth.createUserWithEmailAndPassword(email, password)
                             .addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
                                 @Override
 
                                 public void onComplete(@NonNull Task<AuthResult> task) {
-                                    Log.d("FirebaseAuth", "onComplete" + task.getException().getMessage());
 
                                     if (task.isSuccessful()) {
                                         Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
@@ -67,23 +66,21 @@ public class SignUpActivity extends AppCompatActivity {
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         startActivity(intent);
                                     } else {
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(SignUpActivity.this);
-                                        builder.setMessage(task.getException().getMessage())
-                                                .setTitle(R.string.login_error_title)
-                                                .setPositiveButton(android.R.string.ok, null);
-                                        AlertDialog dialog = builder.create();
-                                        dialog.show();
+                                        ShowAlertMessage(task.getException().getMessage(), getResources().getString(R.string.signup_error_title));
                                     }
-                                }
-                            })
-                            .addOnFailureListener(SignUpActivity.this, new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.e("exception",e.getMessage());
                                 }
                             });
                 }
             }
         });
+    }
+
+    private void ShowAlertMessage(String message, String title){
+        AlertDialog.Builder builder = new AlertDialog.Builder(SignUpActivity.this);
+        builder.setMessage(message)
+                .setTitle(title)
+                .setPositiveButton(android.R.string.ok, null);
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

@@ -48,13 +48,12 @@ public class MainActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
+        boolean logoutClicked = item.getItemId() == R.id.action_logout;
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_logout) {
-            return true;
+        if (logoutClicked) {
+            mFirebaseAuth.signOut();
+            loadLogInView();
         }
-
         return super.onOptionsItemSelected(item);
     }
 
