@@ -47,10 +47,10 @@ public class SignUpActivity extends AppCompatActivity {
                 email = email.trim();
 
                 if (password.isEmpty() || email.isEmpty()) {
-                    ShowAlertMessage(getResources().getString(R.string.signup_error_message), getResources().getString(R.string.signup_error_title));
+                    showAlertMessage(getResources().getString(R.string.signup_error_message), getResources().getString(R.string.signup_error_title));
                 }
                 else if (password.length() < 6) {
-                    ShowAlertMessage(getResources().getString(R.string.password_weak_message), getResources().getString(R.string.signup_error_title));
+                    showAlertMessage(getResources().getString(R.string.password_weak_message), getResources().getString(R.string.signup_error_title));
                 }
                 else
                  {
@@ -66,7 +66,7 @@ public class SignUpActivity extends AppCompatActivity {
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         startActivity(intent);
                                     } else {
-                                        ShowAlertMessage(task.getException().getMessage(), getResources().getString(R.string.signup_error_title));
+                                        showAlertMessage(task.getException().getMessage(), getResources().getString(R.string.signup_error_title));
                                     }
                                 }
                             });
@@ -75,7 +75,7 @@ public class SignUpActivity extends AppCompatActivity {
         });
     }
 
-    private void ShowAlertMessage(String message, String title){
+    private void showAlertMessage(String message, String title){
         AlertDialog.Builder builder = new AlertDialog.Builder(SignUpActivity.this);
         builder.setMessage(message)
                 .setTitle(title)

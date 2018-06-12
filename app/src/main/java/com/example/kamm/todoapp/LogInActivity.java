@@ -54,7 +54,7 @@ public class LogInActivity extends AppCompatActivity {
                 password = password.trim();
 
                 if (email.isEmpty() || password.isEmpty()) {
-                    ShowAlertMessage(getResources().getString(R.string.login_error_message), getResources().getString(R.string.login_error_title));
+                    showAlertMessage(getResources().getString(R.string.login_error_message), getResources().getString(R.string.login_error_title));
                 } else {
                     mFirebaseAuth.signInWithEmailAndPassword(email, password)
                             .addOnCompleteListener(LogInActivity.this, new OnCompleteListener<AuthResult>() {
@@ -66,7 +66,7 @@ public class LogInActivity extends AppCompatActivity {
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         startActivity(intent);
                                     } else {
-                                        ShowAlertMessage(task.getException().getMessage(), getResources().getString(R.string.login_error_title));
+                                        showAlertMessage(task.getException().getMessage(), getResources().getString(R.string.login_error_title));
                                     }
                                 }
                             });
@@ -75,7 +75,7 @@ public class LogInActivity extends AppCompatActivity {
         });
     }
 
-    private void ShowAlertMessage(String message, String title){
+    private void showAlertMessage(String message, String title){
         AlertDialog.Builder builder = new AlertDialog.Builder(LogInActivity.this);
         builder.setMessage(message)
                 .setTitle(title)
