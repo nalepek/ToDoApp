@@ -9,6 +9,17 @@
     tools:showIn="@layout/activity_main"
     android:orientation="vertical">
 
+    <include
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/list_header" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:alpha=".3"
+        android:background="@android:color/black" />
+
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"

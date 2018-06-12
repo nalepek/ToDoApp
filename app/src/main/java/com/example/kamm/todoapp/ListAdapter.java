@@ -63,6 +63,10 @@ public class ListAdapter extends BaseAdapter {
         CheckBox done = (CheckBox) vi.findViewById(R.id.row_done);
         done.setChecked(data.get(position).getDone());
 
+        TextView priorityText = (TextView) vi.findViewById(R.id.row_priority);
+        String priority = Integer.toString(data.get(position).getPriority());
+        priorityText.setText(priority);
+
         return vi;
     }
 }

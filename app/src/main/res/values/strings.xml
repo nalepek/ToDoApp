@@ -26,4 +26,10 @@
     <string name="action_export">Export</string>
 
 
+    //HEADER ListView
+    <string name="header_title">Name</string>
+    <string name="header_date">Date</string>
+    <string name="header_done">Done?</string>
+    <string name="header_priority">Priority</string>
+
 </resources>

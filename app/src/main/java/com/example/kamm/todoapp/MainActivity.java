@@ -20,6 +20,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseListOptions;
@@ -34,6 +35,8 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -41,6 +44,10 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
+    private TextView headerTitle,
+                     headerDate,
+                     headerPriority,
+                     headerDone;
 
     private DatabaseReference mDatabase;
     private String mUserId;
@@ -61,6 +68,40 @@ public class MainActivity extends AppCompatActivity {
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        headerTitle = (TextView) findViewById(R.id.header_title);
+        headerTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        headerDate = (TextView) findViewById(R.id.header_date);
+        headerDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAlertMessage("clicked", "titleeee");
+            }
+        });
+
+        headerPriority = (TextView) findViewById(R.id.header_priority);
+        headerPriority.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAlertMessage("clicked", "titleeee");
+            }
+        });
+
+        headerDone = (TextView) findViewById(R.id.header_done);
+        headerDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAlertMessage("clicked", "titleeee");
+            }
+        });
+
+
 
         if (mFirebaseUser == null) {
             // Not logged in, launch the Log In activity
@@ -125,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
-
     }
 
 
@@ -211,4 +251,6 @@ public class MainActivity extends AppCompatActivity {
         android.support.v7.app.AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+
 }
