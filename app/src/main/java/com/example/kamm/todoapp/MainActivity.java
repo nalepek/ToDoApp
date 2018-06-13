@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         headerTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                sortFirebase("title");
             }
         });
 
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         headerDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showAlertMessage("clicked", "titleeee");
+                sortFirebase("date");
             }
         });
 
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         headerPriority.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showAlertMessage("clicked", "titleeee");
+                sortFirebase("priority");
             }
         });
 
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         headerDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showAlertMessage("clicked", "titleeee");
+                sortFirebase("done");
             }
         });
 
@@ -168,6 +168,37 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void sortFirebase(String order){
+        mDatabase.child("users").child(mUserId).orderByChild(order);
+        mDatabase.child("users").child(mUserId).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                updateListView(dataSnapshot);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                updateListView(dataSnapshot);
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                updateListView(dataSnapshot);
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                updateListView(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                if (databaseError != null){
+                    showAlertMessage(databaseError.getMessage(), "Error!");
+                }
+            }
+        });
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -239,6 +270,12 @@ public class MainActivity extends AppCompatActivity {
             items.add(item);
         }
 
+        items.sort(new Comparator<Item>() {
+            @Override
+            public int compare(Item left, Item right) {
+                return 0;
+            }
+        });
         listView.setAdapter(new ListAdapter(getApplicationContext(), items));
     }
 
