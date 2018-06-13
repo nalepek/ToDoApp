@@ -6,12 +6,13 @@
         android:title="@string/add_item"
         android:icon="@drawable/ic_add_white_24dp"
         app:showAsAction="always"/>
-    <!--<item-->
-        <!--android:id="@+id/action_export"-->
-        <!--android:orderInCategory="100"-->
-        <!--android:title="@string/action_export"-->
-        <!--android:icon="@drawable/baseline_power_settings_new_white_24dp"-->
-        <!--app:showAsAction="ifRoom" />-->
+    <item
+        android:id="@+id/action_export"
+        android:orderInCategory="100"
+        android:title="@string/action_export"
+        android:icon="@drawable/ic_baseline_get_app_24px"
+
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_logout"
         android:orderInCategory="100"
