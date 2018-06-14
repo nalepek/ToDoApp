@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
-        android:hint="Type your title here..."
+        android:hint="@string/item_title_hint"
         android:padding="10dp" />
 
     <View
@@ -38,7 +38,7 @@
         android:background="@android:color/transparent"
         android:ems="10"
         android:gravity="top"
-        android:hint="Get your date..."
+        android:hint="@string/item_date_hint"
         android:padding="10dp"
         android:clickable="true"
         android:inputType="datetime"
@@ -61,7 +61,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:padding="10dp"
-            android:hint="Priority"
+            android:hint="@string/item_priority_hint"
             android:inputType="number" />
 
         <View
@@ -77,22 +77,57 @@
         <CheckBox
             android:id="@+id/item_checked"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:ems="10"
             android:gravity="top"
-            android:hint="Is it done?"
+            android:hint="@string/item_done_hint"
             android:padding="10dp"
             android:clickable="true"
-            android:text="Done?" />
+            android:text="@string/item_done_text" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginStart="10dp"
+            android:alpha=".3"
+            android:background="@android:color/black" />
+
+        <ImageView
+            android:id="@+id/item_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:scaleType="fitXY" />
+
+        <Button
+            android:id="@+id/edit_item_image_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/create_btn"
+            android:text="@string/add_image_btn_text"
+            android:textColor="@android:color/white" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginStart="10dp"
+            android:alpha=".3"
+            android:background="@android:color/black" />
 
         <Button
             android:id="@+id/add_item_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/create_btn"
-            android:text="Create item"
+            android:text="@string/add_item_btn_text"
             android:textColor="@android:color/white" />
 
     </LinearLayout>

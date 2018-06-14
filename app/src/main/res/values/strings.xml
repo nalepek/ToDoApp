@@ -26,6 +26,26 @@
     <string name="action_export">Export</string>
 
 
+    //ItemActivity
+    <string name="add_item_btn_text">Create item</string>
+    <string name="update_item_btn_text">Update item</string>
+
+
+    <string name="item_done_text">Done?</string>
+    <string name="item_done_hint">Is it done?</string>
+
+    <string name="item_priority_hint">Set the priority</string>
+
+    <string name="item_date_hint">Get your date...</string>
+
+    <string name="item_title_hint">Type your title here...</string>
+
+
+    <string name="add_image_btn_text">Add new image</string>
+    <string name="update_image_btn_text">Update image</string>
+
+
+
     //HEADER ListView
     <string name="header_title">Name</string>
     <string name="header_date">Date</string>

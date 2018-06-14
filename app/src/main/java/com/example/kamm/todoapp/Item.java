@@ -16,6 +16,7 @@ public class Item implements Serializable {
     private long date;
     public String key;
     public int priority;
+    public String image;
 
     public Item() {}
 
@@ -34,6 +35,7 @@ public class Item implements Serializable {
     public boolean getDone() { return done; }
     public String getKey() { return key; }
     public int getPriority() { return priority; }
+    public String getImage() { return image; }
 
     public void setTitle(String title) {
         this.title = title;
@@ -41,4 +43,5 @@ public class Item implements Serializable {
     public void setDate(long date) { this.date = date; }
     public void setDone(boolean done) { this.done = done; }
     public void setPriority(int priority) { this.priority = priority; }
+    public void setImage(String image) { this.image = image; }
 }
