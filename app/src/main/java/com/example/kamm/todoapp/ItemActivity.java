@@ -162,7 +162,8 @@ public class ItemActivity extends AppCompatActivity {
 
                 try {
                     priority = Integer.parseInt(priorityText.getText().toString());
-
+                    convertedDate = myCalendar.getTimeInMillis();
+                    
                     Item item = new Item(
                             titleText.getText().toString(),
                             convertedDate,

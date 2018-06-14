@@ -37,7 +37,6 @@ public class OnAlarmReceiver extends BroadcastReceiver {
                 message = "has finished!";
 
             String wholeMessage = item.getTitle() + " " + message;
-
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                     .setSmallIcon(android.R.drawable.stat_notify_sync)
                     .setAutoCancel(false)

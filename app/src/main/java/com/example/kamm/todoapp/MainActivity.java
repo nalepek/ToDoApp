@@ -2,6 +2,8 @@ package com.example.kamm.todoapp;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.Application;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,6 +13,7 @@ import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
+import android.service.notification.StatusBarNotification;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -72,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
                      headerPriority,
                      headerDone;
 
+    NotificationManager notificationManager;
     private DatabaseReference mDatabase;
     private String mUserId;
 
@@ -85,11 +89,20 @@ public class MainActivity extends AppCompatActivity {
     private int requestCode;
     private int grantResults[];
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
+    }
+
     //initial method
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -405,19 +418,23 @@ public class MainActivity extends AppCompatActivity {
 
         listView.setAdapter(new ListAdapter(getApplicationContext(), items));
 
-        int i = 0;
-        for (Item item : items
-             ) {
-            long date = new Date().getTime();
-            if (date >= item.getDate()){
-                AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-                Intent intent = new Intent(getApplicationContext(), OnAlarmReceiver.class);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("item", item);
-                intent.putExtra("bundle", bundle);
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), i, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 100, pendingIntent);
-                i++;
+        notificationManager.cancelAll();
+        StatusBarNotification[] activeNotifications = notificationManager.getActiveNotifications();
+        if (activeNotifications.length == 0) {
+            int i = 0;
+            for (Item item : items
+                    ) {
+                long date = new Date().getTime();
+                if (date >= item.getDate()) {
+                    AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+                    Intent intent = new Intent(getApplicationContext(), OnAlarmReceiver.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("item", item);
+                    intent.putExtra("bundle", bundle);
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), i, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 100, pendingIntent);
+                    i++;
+                }
             }
         }
     }
