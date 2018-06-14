@@ -1,6 +1,8 @@
 package com.example.kamm.todoapp;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -378,7 +381,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    //update listview, update sorting
+    //update listview, update sorting, show alarm
     private void updateListView(DataSnapshot dataSnapshot, ListParams params){
         items.clear();
         for (DataSnapshot itemsSnapshot: dataSnapshot.getChildren()){
@@ -404,6 +407,22 @@ public class MainActivity extends AppCompatActivity {
             Collections.reverse(items);
 
         listView.setAdapter(new ListAdapter(getApplicationContext(), items));
+
+        int i = 0;
+        for (Item item : items
+             ) {
+            long date = new Date().getTime();
+            if (date >= item.getDate()){
+                AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+                Intent intent = new Intent(getApplicationContext(), OnAlarmReceiver.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("item", item);
+                intent.putExtra("bundle", bundle);
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), i, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 100, pendingIntent);
+                i++;
+            }
+        }
     }
 
     //Update header row

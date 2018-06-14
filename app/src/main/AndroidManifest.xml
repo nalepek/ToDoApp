@@ -25,7 +25,11 @@
             android:name=".ItemActivity"
             android:label="@string/title_activity_item"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <receiver android:name=".OnAlarmReceiver" />
     </application>
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+
 </manifest>
