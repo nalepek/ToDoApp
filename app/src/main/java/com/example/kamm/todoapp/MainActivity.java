@@ -225,6 +225,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //permissions for access to external storage
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -235,21 +236,17 @@ public class MainActivity extends AppCompatActivity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    Log.d("permission", "granted");
                 } else {
 
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.uujm
-                    Toast.makeText(MainActivity.this, "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
+                    showAlertMessage( "Permission denied to read your External storage", "Error!");
 
                     //app cannot function without this permission for now so close it...
                     onDestroy();
                 }
                 return;
             }
-
-            // other 'case' line to check fosr other
-            // permissions this app might request
         }
     }
 

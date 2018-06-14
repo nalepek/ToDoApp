@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -14,6 +15,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -30,7 +32,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -92,15 +97,29 @@ public class ItemActivity extends AppCompatActivity {
             editMode = true;
 
             addButton.setText(R.string.update_item_btn_text);
-            imageButton.setText(R.string.update_image_btn_text);
             done.setChecked(intentItem.getDone());
             titleText.setText(intentItem.getTitle());
 
             String priority = Integer.toString(intentItem.getPriority());
             priorityText.setText(priority);
 
-            String dateString = DateFormat.format("MM/dd/yyyy", new Date(intentItem.getDate())).toString();
-            dateText.setText(dateString);
+            if (intentItem.getDate() != 0){
+                String dateString = DateFormat.format("MM/dd/yyyy", new Date(intentItem.getDate())).toString();
+                dateText.setText(dateString);
+            }
+
+            String img = intentItem.getImage();
+            if (img != null) {
+                imageButton.setText(R.string.update_image_btn_text);
+                Bitmap image = null;
+                try {
+                    image = decodeFromFirebaseBase64(intentItem.getImage());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    showAlertMessage( "Something went wrong", "Error!");
+                }
+                imageView.setImageBitmap(image);
+            }
         }
 
         //listener for datepicker
@@ -123,7 +142,6 @@ public class ItemActivity extends AppCompatActivity {
             }
         };
 
-
         dateText.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -144,12 +162,18 @@ public class ItemActivity extends AppCompatActivity {
 
                 try {
                     priority = Integer.parseInt(priorityText.getText().toString());
+
                     Item item = new Item(
                             titleText.getText().toString(),
                             convertedDate,
                             done.isChecked(),
                             priority
                             );
+
+                    if (imageView.getDrawable() != null) {
+                        Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+                        item.setImage(encodeBitmapImage(bitmap));
+                    }
 
                     if (editMode) {
                         mDatabase.child("users").child(mUserId).child("items").child(intentItem.getKey()).setValue(item);
@@ -178,20 +202,24 @@ public class ItemActivity extends AppCompatActivity {
 
     //image dialog on click
     private void loadImageDialog() {
-        final CharSequence[] items = { "Edit", "Delete" };
+        if (imageView.getDrawable() == null) {
+            takePictureOrSelect();
+        }
+        else {
+            final CharSequence[] items = {"Edit", "Delete"};
 
-        android.app.AlertDialog.Builder adb = new android.app.AlertDialog.Builder(ItemActivity.this);
-        adb.setTitle("Image")
-                .setItems(items, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int item) {
-                        if (item == 0) {
-                            takePictureOrSelect();
+            android.app.AlertDialog.Builder adb = new android.app.AlertDialog.Builder(ItemActivity.this);
+            adb.setTitle("Image")
+                    .setItems(items, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int item) {
+                            if (item == 0) {
+                                takePictureOrSelect();
+                            } else if (item == 1) {
+                                deleteImage();
+                            }
                         }
-                        else if (item == 1){
-                            deleteImage();
-                        }
-                    }
-                }).show();
+                    }).show();
+        }
     }
 
     //take picture or select from gallery
@@ -199,7 +227,7 @@ public class ItemActivity extends AppCompatActivity {
         final CharSequence[] items = { "Take photo", "Select photo from gallery" };
 
         android.app.AlertDialog.Builder adb = new android.app.AlertDialog.Builder(ItemActivity.this);
-        adb.setTitle("Choose")
+        adb.setTitle("Item photo")
                 .setItems(items, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         if (item == 0) {
@@ -214,7 +242,9 @@ public class ItemActivity extends AppCompatActivity {
 
     //select pic from gallery
     private void selectPicFromGallery() {
-
+        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+        photoPickerIntent.setType("image/*");
+        startActivityForResult(photoPickerIntent, 1);
     }
 
     //take the picture
@@ -223,23 +253,29 @@ public class ItemActivity extends AppCompatActivity {
         startActivityForResult(takePicture, 0);//zero can be replaced with any action code
     }
 
+    //take or choose photo
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
         switch(requestCode) {
             case 0:
                 if(resultCode == RESULT_OK){
-                    Uri selectedImage = imageReturnedIntent.getData();
-
-                    //Bitmap myBitmap = BitmapFactory.decodeFile(selectedImage.getPath());
-                    //imageView.setImageBitmap(myBitmap);
-                    imageView.setImageURI(selectedImage);
+                    Bitmap photo = (Bitmap) imageReturnedIntent.getExtras().get("data");
+                    imageView.setImageBitmap(photo);
                 }
 
                 break;
             case 1:
                 if(resultCode == RESULT_OK){
-                    Uri selectedImage = imageReturnedIntent.getData();
-                    imageView.setImageURI(selectedImage);
+                    try {
+                        final Uri imageUri = imageReturnedIntent.getData();
+                        final InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                        final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                        imageView.setImageBitmap(selectedImage);
+                        imageButton.setText(R.string.update_image_btn_text);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                        showAlertMessage( "Something went wrong", "Error!");
+                    }
                 }
                 break;
         }
@@ -247,34 +283,9 @@ public class ItemActivity extends AppCompatActivity {
 
     //delete image
     private void deleteImage() {
-
+        imageView.setImageDrawable(null);
+        imageButton.setText(R.string.add_image_btn_text);
     }
-
-//    //edit image
-//    private void editImage() {
-//        Intent intent = new Intent();
-//        intent.setType("image/*");
-//        intent.setAction(Intent.ACTION_GET_CONTENT);
-//        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
-//    }
-//
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
-//                && data != null && data.getData() != null )
-//        {
-//            filePath = data.getData();
-//            try {
-//                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
-//                imageView.setImageBitmap(bitmap);
-//            }
-//            catch (IOException e)
-//            {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
 
     private void loadMainView(){
         Intent intent = new Intent(this, MainActivity.class);
@@ -283,6 +294,7 @@ public class ItemActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    //dialog for alerts
     private void showAlertMessage(String message, String title){
         AlertDialog.Builder builder = new AlertDialog.Builder(ItemActivity.this);
         builder.setMessage(message)
@@ -292,4 +304,18 @@ public class ItemActivity extends AppCompatActivity {
         dialog.show();
     }
 
+
+    //convert image bitmap to base64 to save to Firebase
+    private String encodeBitmapImage(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        String imageEncoded = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
+        return imageEncoded;
+    }
+
+    //retrieve image from Firebase and convert to bitmap
+    public static Bitmap decodeFromFirebaseBase64(String image) throws IOException {
+        byte[] decodedByteArray = android.util.Base64.decode(image, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.length);
+    }
 }
